@@ -49,21 +49,30 @@ SUMMARY:
     of other object.
  */
 
-EVENT0.EventEmitter = function(){
-}
+EVENT0 = typeof EVENT0 === "undefined" ? {} : EVENT0;
 
-EVENT0.EventEmitter.prototype.addListener = function(event_data){
+EVENT0.EventEmitter = function(){} 
+
+EVENT0.EventEmitter.prototype.addListener = function(event_type, listener){
 /**
  * Adds listener bounded to the emitter object:
  *   'this' inside this function will be bounded to the event emiiter
  *   as usual in other js frameworks (jquery, nodejs).
  */
-
+    if (this._listeners === undefined) {
+        this._listeners = {};
+    }
+    if (this._listeners[event_type] === undefined) {
+        this._listeners[event_type] = []; 
+    }
+    if (this._listeners[event_type].indexOf(listener) === -1) {
+        this._listeners[event_type].push( listener );
+    }
 }
 EVENT0.EventEmitter.prototype.on = EVENT0.EventEmitter.prototype.addListener;
 
 
-EVENT0.EventEmitter.prototype.addListenerX = function(event_emitter, event_data){
+EVENT0.EventEmitter.prototype.addListenerX = function(event_type, listener){
 /** 
  * Adds listener bounded to the receiver object:
  *   'this' inside this function will be bounded to the event emiiter.
@@ -71,8 +80,21 @@ EVENT0.EventEmitter.prototype.addListenerX = function(event_emitter, event_data)
  *   by using the receiver_function.bind(receiver_object) method.
  *   In this case, the emitter passes a reference to itself as the 
  *   1st parameter of the function. 
+ * 
+ *   Watch Out! Unlike normal listeners, bounded functions can be 
+ *   added as listeners more than once! (See below).
  */
-
+    if (this._listenersX === undefined) {
+        this._listenersX = {};
+    }
+    if (this._listenersX[event_type] === undefined) {
+        this._listenersX[event_type] = []; 
+    }
+    if (this._listenersX[event_type].indexOf(listener) === -1) {
+        // This does not work here as the bounded functions deriving 
+        // from the same function and bounded object are DIFFERENT.
+        this._listenersX[event_type].push( listener );
+    }
 }
 EVENT0.EventEmitter.prototype.onX = EVENT0.EventEmitter.prototype.addListenerX;
 
@@ -89,6 +111,72 @@ EVENT0.EventEmitter.prototype.emit = function(event_type, event_data){
  *  are called:
  *      listener(event_emitter, event_data)
  */ 
-
-
+    if (this._listeners === undefined 
+        && this._listenersX === undefined) 
+    {
+        return;
+    }
+    if (this._listeners[event_type] === undefined 
+        && this._listenersX[event_type] === undefined) 
+    {
+        return;
+    }
+    if (this._listeners.length === 0 && this._listenersX === 0) {
+        return;
+    }
+    // Call _listeners
+    if (this._listeners[event_type] !== undefined){
+        for (var i=0; i<this._listeners[event_type].length; i++) {
+            // X listeners are called bounded to the emitter
+            this._listeners[event_type][i].call(this, event_data);   
+        }
+    }
+    // Call _listenersX
+    if (this._listenersX[event_type] !== undefined){
+        for (var i=0; i<this._listenersX[event_type].length; i++) {
+            // X listeners are called without bounding them to the emitter
+            //  as they are already bounded to the listener
+            this._listenersX[event_type][i](this, event_data);   
+        }
+    }
 }
+
+EVENT0.EventEmitter.prototype.removeListener = function(event_type, listener){
+/**
+ * Removes listener from the list
+ */
+    if (this._listeners === undefined) {
+        return;
+    }
+    if (this._listeners[event_type] === undefined) {
+        return;
+    }
+    var index = this._listeners[event_type].indexOf(listener);
+    if (index !== -1) {
+        this._listeners[event_type].splice(index,1);
+    }
+}
+
+EVENT0.EventEmitter.prototype.removeListenerX = function(event_type, listener){
+/**
+ * Removes listener from the list
+ */
+    if (this._listenersX === undefined) { 
+        return;
+    } 
+    if (this._listenersX[event_type] === undefined) {
+        return;
+    }
+    var index = this._listenersX[event_type].indexOf(listener);
+    if (index !== -1) {
+        this._listenersX[event_type].splice(index,1);
+    }
+}
+
+/**
+ * Export EventEmitter (npm/nodejs)
+ */
+module.exports = {
+    EventEmitter : EVENT0.EventEmitter
+};
+
