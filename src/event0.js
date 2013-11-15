@@ -1,7 +1,9 @@
 /** 
  * This file is part of event0.js 
+ * (Javascript Event-Emitter-Receiver implementation with a twist)
+ * https://github.com/aluarosi/event0.js
  * 
- * Copyright 2013 Alvaro Santamaria Herrero (aluarosi)
+ * Copyright (C) 2013 Alvaro Santamaria Herrero (aluarosi)
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
