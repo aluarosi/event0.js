@@ -127,14 +127,14 @@ EVENT0.EventEmitter.prototype.emit = function(event_type, event_data){
         return;
     }
     // Call _listeners
-    if (this._listeners[event_type] !== undefined){
+    if (if this._listeners !== undefined && this._listeners[event_type] !== undefined){
         for (var i=0; i<this._listeners[event_type].length; i++) {
             // X listeners are called bounded to the emitter
             this._listeners[event_type][i].call(this, event_data);   
         }
     }
     // Call _listenersX
-    if (this._listenersX[event_type] !== undefined){
+    if (this._listenersX !== undefined && this._listenersX[event_type] !== undefined){
         for (var i=0; i<this._listenersX[event_type].length; i++) {
             // X listeners are called without bounding them to the emitter
             //  as they are already bounded to the listener
