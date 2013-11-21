@@ -113,21 +113,8 @@ EVENT0.EventEmitter.prototype.emit = function(event_type, event_data){
  *  are called:
  *      listener(event_emitter, event_data)
  */ 
-    if (this._listeners === undefined 
-        && this._listenersX === undefined) 
-    {
-        return;
-    }
-    if (this._listeners[event_type] === undefined 
-        && this._listenersX[event_type] === undefined) 
-    {
-        return;
-    }
-    if (this._listeners.length === 0 && this._listenersX === 0) {
-        return;
-    }
     // Call _listeners
-    if (if this._listeners !== undefined && this._listeners[event_type] !== undefined){
+    if (this._listeners !== undefined && this._listeners[event_type] !== undefined){
         for (var i=0; i<this._listeners[event_type].length; i++) {
             // X listeners are called bounded to the emitter
             this._listeners[event_type][i].call(this, event_data);   
