@@ -4,6 +4,7 @@ event0
 Javascript Event-Emitter-Receiver implementation with a twist 
 
 
+```javascript 
 /**
 SUMMARY:
     We deal with events, emitters, receivers and listeners.
@@ -34,3 +35,4 @@ SUMMARY:
     This case makes it easier to call a listener when it is a method 
     of other object.
  */
+```
